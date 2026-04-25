@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { puzzles } from './data/puzzles';
 import PuzzleCard from './components/PuzzleCard';
 import ResultsScreen from './components/ResultsScreen';
+import HandChart from './components/HandChart';
+import PreflopQuiz from './components/PreflopQuiz';
 import AdSlot from './components/AdSlot';
 import './styles.css';
 
@@ -15,6 +17,7 @@ function shuffle(arr) {
 }
 
 export default function App() {
+  const [mode, setMode] = useState('puzzles'); // 'puzzles' | 'chart' | 'preflop-quiz'
   const [deck, setDeck] = useState(() => shuffle(puzzles));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState({ correct: 0, total: 0 });
@@ -56,6 +59,26 @@ export default function App() {
           <span className="logo-suits" aria-hidden="true">♦♣</span>
         </h1>
         <p className="logo-sub">Free Texas Hold'em Strategy Training</p>
+        <nav className="mode-tabs" aria-label="App mode">
+          <button
+            className={`mode-tab ${mode === 'puzzles' ? 'active' : ''}`}
+            onClick={() => setMode('puzzles')}
+          >
+            Strategy Puzzles
+          </button>
+          <button
+            className={`mode-tab ${mode === 'chart' ? 'active' : ''}`}
+            onClick={() => setMode('chart')}
+          >
+            Preflop Chart
+          </button>
+          <button
+            className={`mode-tab ${mode === 'preflop-quiz' ? 'active' : ''}`}
+            onClick={() => setMode('preflop-quiz')}
+          >
+            Preflop Quiz
+          </button>
+        </nav>
       </header>
 
       <div className="content-row">
@@ -65,7 +88,11 @@ export default function App() {
         </aside>
 
         <main className="app-main">
-          {done ? (
+          {mode === 'chart' ? (
+            <HandChart />
+          ) : mode === 'preflop-quiz' ? (
+            <PreflopQuiz />
+          ) : done ? (
             <ResultsScreen
               score={score}
               onRestart={restart}
